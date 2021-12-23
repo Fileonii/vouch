@@ -1,0 +1,25 @@
+.App{
+    .app-header{
+        position: sticky;
+        background: black;
+        padding: 30px; 
+        display: flex;   
+        color:white;    
+        width: 100%;
+        .app-header-label{           
+            text-align: left;
+            justify-content: flex-start;
+        }
+        .app-header-cart{
+            text-align: right;
+            justify-content: flex-end;
+        }
+
+    }
+
+    .list-of-submited{
+        height:300px;
+        width:100px;
+        border:1px solid black;
+    }
+}
