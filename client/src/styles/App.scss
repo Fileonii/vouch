@@ -1,25 +1,81 @@
+body{
+    background: #0d1d4e17;
+}
 .App{
     .app-header{
         position: sticky;
-        background: black;
+        background: #0d1d4e;
         padding: 30px; 
         display: flex;   
         color:white;    
-        width: 100%;
+        box-shadow: 0 3px 5px #0d1d4e;
         .app-header-label{           
             text-align: left;
             justify-content: flex-start;
         }
-        .app-header-cart{
-            text-align: right;
-            justify-content: flex-end;
+        .app-header-history{
+            margin-left: auto;
         }
 
     }
-
-    .list-of-submited{
-        height:300px;
-        width:100px;
-        border:1px solid black;
+    .purchase-component{
+        padding:40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .purchase-form{
+            background:rgba(255, 255, 255, 0.481);
+            width:60%;
+            height: 500px;
+            border: 1px solid #cfc7c6;
+            border-radius: 10px;
+            padding-top:10px;
+        .purchase-form-section{
+            padding:10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            .form-input{
+                background: inherit;
+                height: 40px;
+                width: 85%;
+                font-size: 20px;
+                border-radius: 10px;
+                border: 0.5px solid #cfc7c6;
+            }
+            .product-box{
+                padding: 10px;
+                margin:5px;
+                height:250px;
+                width: 85%;
+                border:1px solid #cfc7c6;
+                border-radius: 10px;
+                .product-searcher{
+                    width:100%;
+                    border:1px solid #cfc7c6;
+                    background: inherit;
+                }
+                .product-item:hover{
+                    background-color: #f7f8fa;
+                }
+                .product-item{
+                    margin: 3px 0 3px 0;
+                    display: flex;
+                    font-size: 20px;
+                    .product-item-add{
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-left: auto;
+                        cursor:pointer;
+                        border-radius:20px;
+                        border: 0px
+                    }
+                }
+            }
+        }
     }
+    }
+
 }

@@ -8,12 +8,10 @@ import "./styles/App.scss"
 
 function App() {
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div className="App">
-        <AppHeader></AppHeader>
-        <PurchaseForm></PurchaseForm>
-      </div>
-    </DndProvider>
+    <div className="App">
+      <AppHeader></AppHeader>
+      <PurchaseForm></PurchaseForm>
+    </div>
   );
 }
 

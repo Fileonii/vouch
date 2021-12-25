@@ -4,88 +4,128 @@ import { DndProvider, DragObjectFactory, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import ProductsService from '../api/classes/Products';
 import PurchaseService from '../api/classes/Purchase';
-import { IProducts, IPurchase } from '../api/helpers';
+import { IContractors, IProducts } from '../api/helpers';
 import ProductItem from './ProductItem';
 
+interface IProductsState {
+    productItem: IProducts;
+    isChosen: boolean;
+}
+
 export default function PurchaseForm() {
-    const [products, setProducts] = useState<IProducts[]>([]);
-    const [purchase, setPurchase] = useState<IPurchase>();
-    const [board, setBoard] = useState<IProducts[]>([]);
-
-    const x = async () => { return await ProductsService.getProducts() }
-    const [{ isOver }, drop] = useDrop(() => ({
-        accept: "div",
-        drop: (item: any) => {
-            console.log(products)
-            addProductToPurchase(item.id)
-        },
-        collect: (monitor) => ({
-            isOver: !!monitor.isOver()
-        }),
-
-
-    }))
-    const addProductToPurchase = async (id: any) => {
-        const product = await ProductsService.getProductsById(id);
-        const temp = x();
-        //const d = (await temp).filter((productA) => { return product.id !== productA.id })
-        console.log(board);
-        setBoard((board) => [...board, product]);
-
-    };
+    const [products, setProducts] = useState<IProductsState[]>([]);
+    const [purchase, setPurchase] = useState<IContractors>({
+        seller: "",
+        buyer: ""
+    });
+    const [search, setSearch] = useState<string>("");
+    const returnFinalProducts = () => {
+        const chosenProducts: IProductsState[] = products.filter((item) => { return item.isChosen == true; })
+        let newProductState: IProducts[] = [];
+        for (let i = 0; i < chosenProducts.length; i++) {
+            newProductState[i] = {
+                type: chosenProducts[i].productItem.type,
+                id: chosenProducts[i].productItem.id
+            }
+        }
+        return newProductState;
+    }
     const getProducts = async () => {
-        setProducts(await ProductsService.getProducts());
+        const fetchProducts: IProducts[] = await ProductsService.getProducts();
+        let newProductState: IProductsState[] = [];
+        for (let i = 0; i < fetchProducts.length; i++) {
+            newProductState[i] = {
+                productItem: fetchProducts[i],
+                isChosen: false
+            };
+        }
+        setProducts(newProductState);
     };
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
         console.log(e.target)
         setPurchase({ ...purchase, [e.target.name]: e.target.value } as ComponentState);
-        console.log(board)
 
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        console.log(board)
-        console.log(purchase);
-        PurchaseService.createPurchase(purchase, board)
+        if (!(products.length == 0 || purchase?.buyer === "" || purchase?.seller === "")) {
+            const chosenProducts: IProducts[] = returnFinalProducts();
+            PurchaseService.createPurchase(purchase, chosenProducts);
+        } else {
+            alert("PROSZĘ UZUPEŁNIĆ WSZYSTKIE POLA FORMULARZA")
+        }
+
     };
+    const handleSearcher = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.target.value);
+    }
+    const handleProducts = (product: IProducts) => {
+        const productsTemp = products.slice();
+        productsTemp.forEach((item) => {
+            if (item.productItem.id == product.id) {
+                if (item.isChosen) {
+                    item.isChosen = false;
+                } else {
+                    item.isChosen = true;
+                }
+
+            }
+        })
+        setProducts(productsTemp);
+
+    }
+
     useEffect(() => {
         getProducts();
     }, []);
     return (
         <div className="purchase-component">
             <form className="purchase-form">
-                <label htmlFor="buyer-name">Buyer Name</label>
-                <input
-                    className="form-buyer-name"
-                    type="text"
-                    name="buyer"
-                    value={purchase?.buyer}
-                    onChange={handleChange}
-                >
+                <section className="purchase-form-section">
+                    <input
+                        className="form-input"
+                        type="text"
+                        name="buyer"
+                        placeholder="Buyer Name"
+                        value={purchase?.buyer}
+                        onChange={handleChange}
+                    >
 
-                </input>
-                <label htmlFor="seller-name">Seller Name</label>
-                <input
-                    className="form-seller-name"
-                    type="text"
-                    name="seller"
-                    value={purchase?.seller}
-                    onChange={handleChange}
-                >
-                </input>
-
-                <div className="list-of-products">
-                    {products.map((product) => {
-                        return <ProductItem id={product.id} type={product.type}></ProductItem>
-                    })}
-                </div>
-                <div className="list-of-submited" ref={drop}>
-                    {board.map((product) => {
-                        return <ProductItem id={product.id} type={product.type}></ProductItem>
-                    })}
-                </div>
+                    </input>
+                </section>
+                <section className="purchase-form-section">
+                    <input
+                        className="form-input"
+                        type="text"
+                        name="seller"
+                        placeholder="Seller Name"
+                        value={purchase?.seller}
+                        onChange={handleChange}
+                    >
+                    </input>
+                </section>
+                <section className="purchase-form-section">
+                    <div className="product-box">
+                        <input className="product-searcher"
+                            type="text"
+                            name="searcher"
+                            placeholder="Search for products"
+                            onChange={handleSearcher}
+                        ></input>
+                        {products.filter((item) => {
+                            if (search == "") {
+                                return item;
+                            }
+                            else if (item.productItem.type.toLowerCase().includes(search?.toLowerCase())) {
+                                return item;
+                            }
+                        }).map((product) => {
+                            return <ProductItem product={product.productItem} onStatusChange={handleProducts} isChosen={product.isChosen} />
+                        })}
+                    </div>
+                </section>
                 <button onClick={handleSubmit}>Submit</button>
             </form>
 
