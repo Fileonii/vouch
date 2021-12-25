@@ -1,4 +1,4 @@
-import { IPurchase } from "../helpers";
+import { IContractors, IProducts, IPurchase } from "../helpers";
 import { ApiClient } from "./Api"
 import { purchaseByIdEndpoint, purchaseEndpoint } from "../endpoints"
 
@@ -13,11 +13,15 @@ class PurchaseService {
     //     return await api.get(purchaseByIdEndpoint(id))
     // }
     //: Promise<IPurchase>
-    static async createPurchase(purchase: any, product: any) {
+    static async createPurchase(contrator: IContractors, products: IProducts[]) {
         const api = new ApiClient()
-        console.log(purchase)
-        console.log(product)
-        //return await api.post(purchaseEndpoint(), {})
+        console.log(contrator)
+        console.log(products)
+        return await api.post(purchaseEndpoint(), {
+            seller: contrator.seller,
+            buyer: contrator.buyer,
+            products: products
+        })
     }
 }
 

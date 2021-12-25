@@ -7,3 +7,7 @@ export interface IPurchase {
     buyer: string;
     products: IProducts[];
 }
+export interface IContractors {
+    buyer: string;
+    seller: string;
+}
