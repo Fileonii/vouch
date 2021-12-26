@@ -19,8 +19,6 @@ export class PurchaseController {
     }
     @Post()
     async createNewPurchase(@Body() body: CreatePurchaseDto): Promise<Purchase> {
-        //const getProduct = await this.productsService.getOneProduct(body.products.id);
-        //body.products = getProduct;
         return this.purchaseService.createNewPurchase(body);
     }
 }

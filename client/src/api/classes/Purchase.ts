@@ -7,16 +7,8 @@ class PurchaseService {
         const api = new ApiClient()
         return await api.get(purchaseEndpoint())
     }
-
-    // static async getPurchaseById(id: number): Promise<IPurchase> {
-    //     const api = new ApiClient()
-    //     return await api.get(purchaseByIdEndpoint(id))
-    // }
-    //: Promise<IPurchase>
     static async createPurchase(contrator: IContractors, products: IProducts[]) {
         const api = new ApiClient()
-        console.log(contrator)
-        console.log(products)
         return await api.post(purchaseEndpoint(), {
             seller: contrator.seller,
             buyer: contrator.buyer,

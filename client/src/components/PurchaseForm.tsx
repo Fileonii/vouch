@@ -5,19 +5,36 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import ProductsService from '../api/classes/Products';
 import PurchaseService from '../api/classes/Purchase';
 import { IContractors, IProducts } from '../api/helpers';
+import ModalComponent from './Modal';
 import ProductItem from './ProductItem';
 
 interface IProductsState {
     productItem: IProducts;
     isChosen: boolean;
 }
+export interface IModalInfo {
+    label: string,
+    content: string
+}
 
 export default function PurchaseForm() {
+    const [open, setOpen] = useState<boolean>(false);
     const [products, setProducts] = useState<IProductsState[]>([]);
     const [purchase, setPurchase] = useState<IContractors>({
         seller: "",
         buyer: ""
     });
+    const [modalInfo, setModalInfo] = useState<IModalInfo>({
+        label: "",
+        content: ""
+    })
+
+    const handleOpen = () => {
+        setOpen(true);
+    }
+    const handleClose = () => {
+        setOpen(false);
+    }
     const [search, setSearch] = useState<string>("");
     const returnFinalProducts = () => {
         const chosenProducts: IProductsState[] = products.filter((item) => { return item.isChosen == true; })
@@ -43,19 +60,26 @@ export default function PurchaseForm() {
     };
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
-        console.log(e.target)
         setPurchase({ ...purchase, [e.target.name]: e.target.value } as ComponentState);
 
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        if (!(products.length == 0 || purchase?.buyer === "" || purchase?.seller === "")) {
-            const chosenProducts: IProducts[] = returnFinalProducts();
+        const chosenProducts: IProducts[] = returnFinalProducts();
+        if (!(chosenProducts.length == 0 || purchase?.buyer === "" || purchase?.seller === "")) {
             PurchaseService.createPurchase(purchase, chosenProducts);
+            setModalInfo({
+                label: "Sukces!",
+                content: "Udało się pomyślnie dodać rekord"
+            })
         } else {
-            alert("PROSZĘ UZUPEŁNIĆ WSZYSTKIE POLA FORMULARZA")
+            setModalInfo({
+                label: "Uzupełnij dane!",
+                content: "Nie wszystkie dane w formularzu zostaly uzupełnione. Proszę, zweryfikuj ich poprawność."
+            })
         }
+        setOpen(true);
 
     };
     const handleSearcher = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,6 +105,7 @@ export default function PurchaseForm() {
         getProducts();
     }, []);
     return (
+
         <div className="purchase-component">
             <form className="purchase-form">
                 <section className="purchase-form-section">
@@ -126,9 +151,13 @@ export default function PurchaseForm() {
                         })}
                     </div>
                 </section>
-                <button onClick={handleSubmit}>Submit</button>
-            </form>
+                <section className="purchase-form-section">
+                    <button className="product-submit" onClick={handleSubmit}>Submit</button>
+                </section>
 
+            </form>
+            <ModalComponent onClose={handleClose} isOpen={open} infoMode={true} info={modalInfo}></ModalComponent>
         </div>
+
     )
 }
