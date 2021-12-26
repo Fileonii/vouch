@@ -107,56 +107,60 @@ export default function PurchaseForm() {
     return (
 
         <div className="purchase-component">
-            <form className="purchase-form">
-                <section className="purchase-form-section">
-                    <input
-                        className="form-input"
-                        type="text"
-                        name="buyer"
-                        placeholder="Buyer Name"
-                        value={purchase?.buyer}
-                        onChange={handleChange}
-                    >
+            {products.length > 0 ? (
+                <div>
+                    <form className="purchase-form">
+                        <section className="purchase-form-section">
+                            <input
+                                className="form-input"
+                                type="text"
+                                name="buyer"
+                                placeholder="Buyer Name"
+                                value={purchase?.buyer}
+                                onChange={handleChange}
+                            >
 
-                    </input>
-                </section>
-                <section className="purchase-form-section">
-                    <input
-                        className="form-input"
-                        type="text"
-                        name="seller"
-                        placeholder="Seller Name"
-                        value={purchase?.seller}
-                        onChange={handleChange}
-                    >
-                    </input>
-                </section>
-                <section className="purchase-form-section">
-                    <div className="product-box">
-                        <input className="product-searcher"
-                            type="text"
-                            name="searcher"
-                            placeholder="Search for products"
-                            onChange={handleSearcher}
-                        ></input>
-                        {products.filter((item) => {
-                            if (search == "") {
-                                return item;
-                            }
-                            else if (item.productItem.type.toLowerCase().includes(search?.toLowerCase())) {
-                                return item;
-                            }
-                        }).map((product) => {
-                            return <ProductItem product={product.productItem} onStatusChange={handleProducts} isChosen={product.isChosen} />
-                        })}
-                    </div>
-                </section>
-                <section className="purchase-form-section">
-                    <button className="product-submit" onClick={handleSubmit}>Submit</button>
-                </section>
+                            </input>
+                        </section>
+                        <section className="purchase-form-section">
+                            <input
+                                className="form-input"
+                                type="text"
+                                name="seller"
+                                placeholder="Seller Name"
+                                value={purchase?.seller}
+                                onChange={handleChange}
+                            >
+                            </input>
+                        </section>
+                        <section className="purchase-form-section">
+                            <div className="product-box">
+                                <input className="product-searcher"
+                                    type="text"
+                                    name="searcher"
+                                    placeholder="Search for products"
+                                    onChange={handleSearcher}
+                                ></input>
+                                {products.filter((item) => {
+                                    if (search == "") {
+                                        return item;
+                                    }
+                                    else if (item.productItem.type.toLowerCase().includes(search?.toLowerCase())) {
+                                        return item;
+                                    }
+                                }).map((product) => {
+                                    return <ProductItem product={product.productItem} onStatusChange={handleProducts} isChosen={product.isChosen} />
+                                })}
+                            </div>
+                        </section>
+                        <section className="purchase-form-section">
+                            <button className="product-submit" onClick={handleSubmit}>Submit</button>
+                        </section>
 
-            </form>
-            <ModalComponent onClose={handleClose} isOpen={open} infoMode={true} info={modalInfo}></ModalComponent>
+                    </form>
+                    <ModalComponent onClose={handleClose} isOpen={open} infoMode={true} info={modalInfo}></ModalComponent></div>)
+                : <h2 className="purchase-form-section">Refresh Page!</h2>}
+
         </div>
 
     )
